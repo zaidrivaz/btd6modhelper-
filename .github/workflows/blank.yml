@@ -1,0 +1,40 @@
+# This workflow is named "Dotnet Build" and will run whenever you push code to the main branch.
+name: Dotnet Build
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    # Use the latest Ubuntu Linux environment for the build.
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        # Fetch the entire history to get all the required files.
+        fetch-depth: 0
+
+    - name: Setup .NET
+      # Use a GitHub action to easily set up the required .NET SDK version.
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Restore dependencies
+      # Run the dotnet restore command to download all required packages.
+      run: dotnet restore
+
+    - name: Build
+      # Run the dotnet build command in Release mode.
+      run: dotnet build --no-restore --configuration Release
+      
+    - name: Upload a Build Artifact
+      # This step saves the compiled files as a zip file that you can download.
+      uses: actions/upload-artifact@v4
+      with:
+        name: BTD-Mod-Helper-Artifacts
+        # The path to the compiled files. This will be a bit different depending on your project structure.
+        path: BTD-Mod-Helper-3.4.8/BloonsTD6 Mod Helper/bin/Release/net8.0/BloonsTD6 Mod Helper.dll
+
